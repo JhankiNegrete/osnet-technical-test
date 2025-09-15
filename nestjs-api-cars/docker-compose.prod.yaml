@@ -1,0 +1,45 @@
+services:
+  api-cars-db:
+    image: mysql:8.0
+    container_name: api-cars-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis-db:
+    image: redis:7
+    container_name: redis-db
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+
+  nestjs-api-cars:
+    build: .
+    container_name: nestjs_api
+    restart: always
+    depends_on:
+      - api-cars-db
+      - redis-db
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID}
+      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET}
+
+volumes:
+  mysql_data:
