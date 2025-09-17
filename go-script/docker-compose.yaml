@@ -1,0 +1,13 @@
+services:
+  ping-service:
+    build: .
+    container_name: ping-app
+    networks:
+      - ping-net
+    environment:
+      - GO111MODULE=on
+    restart: always
+
+networks:
+  ping-net:
+    driver: bridge
