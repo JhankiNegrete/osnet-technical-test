@@ -10,16 +10,19 @@ import {
   Query,
   Param,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 
 import { CreateUserDto, SearchUsersOptionsDto, UpdateUserDto } from '../dtos';
 
 import { PageDto, PageOptionsDto } from '@/common';
+import { JwtAuthGuard } from '@/api/auth/guard';
 
 import { UsersService } from '../services';
 import { User } from '../entities';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

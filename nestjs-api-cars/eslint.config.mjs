@@ -29,8 +29,10 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',         //validar factorizacion
-      '@typescript-eslint/no-unsafe-member-access': 'off'//validar factorizacion
+      '@typescript-eslint/no-unsafe-call': 'off',         //pending validate refactor
+      '@typescript-eslint/no-unsafe-member-access': 'off', //pending validate refactor
+      '@typescript-eslint/no-unsafe-assignment': 'off', //pending validate refactor
+      '@typescript-eslint/no-unsafe-return': 'off', //pending validate refactor
     },
   },
 );

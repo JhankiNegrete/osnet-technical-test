@@ -10,6 +10,7 @@ import { ThrottlerConfig } from './config/throttler';
 import { MainDataSourceConfig } from './config/database';
 
 import { UsersModule } from './api/users/users.module';
+import { AuthModule } from './api/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersModule } from './api/users/users.module';
     ThrottlerModule.forRootAsync(ThrottlerConfig),
     CacheModule.registerAsync(RedisOptions),
     UsersModule,
+    AuthModule,
   ],
   providers: [
     {

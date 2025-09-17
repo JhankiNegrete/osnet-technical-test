@@ -176,7 +176,7 @@ export class UsersService extends BaseService {
     return this.sanitizeUser(savedUser);
   }
 
-  async findOneUser(term: string) {
+  async findOneUser(term: string): Promise<User | null> {
     const model = 'user';
     let user: User | null = null;
 
@@ -187,11 +187,13 @@ export class UsersService extends BaseService {
         `${model}.email`,
         `${model}.firstName`,
         `${model}.lastName`,
+        `${model}.password`,
         `${model}.role`,
         `${model}.phone`,
         `${model}.address`,
         `${model}.city`,
         `${model}.country`,
+        `${model}.isActive`,
         `${model}.createdAt`,
         `${model}.updatedAt`,
       ]);
@@ -240,7 +242,7 @@ export class UsersService extends BaseService {
     }
   }
 
-  private sanitizeUser(user: User): Omit<User, 'password'> {
+  sanitizeUser(user: User): Omit<User, 'password'> {
     const { password: _pw, ...userWithoutPassword } = user;
     void _pw;
     return userWithoutPassword;
