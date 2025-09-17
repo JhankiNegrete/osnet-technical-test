@@ -1,9 +1,11 @@
+import { Order } from '@/api/orders/entities';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 // import { Order } from './order.entity';
 
@@ -51,8 +53,8 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  // @OneToMany(() => Order, (order) => order.user)
-  // orders: Order[];
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 
   @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
   createdAt!: Date;
