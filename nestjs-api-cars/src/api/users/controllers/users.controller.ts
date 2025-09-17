@@ -25,12 +25,14 @@ import { Roles } from '@/common/decorators';
 import { JwtAuthGuard } from '@/api/auth/guard';
 import { OwnershipGuard, RolesGuard } from '@/common/guards';
 
-@UseGuards(JwtAuthGuard, RolesGuard) // global para todos los endpoints
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Roles('admin', 'client')
+  @UseGuards(OwnershipGuard)
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -55,14 +57,14 @@ export class UsersController {
 
   @Patch(':id')
   @Roles('admin', 'client')
-  @UseGuards(OwnershipGuard) // admin puede todo, client solo el suyo
+  @UseGuards(OwnershipGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @Roles('admin', 'client') // permitimos ambos
-  @UseGuards(OwnershipGuard) // admin borra a cualquiera, client solo el suyo
+  @Roles('admin', 'client')
+  @UseGuards(OwnershipGuard)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return await this.usersService.remove(id);
   }
