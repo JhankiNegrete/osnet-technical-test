@@ -2,17 +2,23 @@ import {
   Controller,
   Post,
   Body,
-  // Get,
-  // Param,
-  // Patch,
-  // Delete,
+  Get,
+  Patch,
+  Delete,
   HttpCode,
   HttpStatus,
+  Query,
+  Param,
+  ParseUUIDPipe,
 } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 
-import { CreateUserDto } from '../dtos';
+import { CreateUserDto, SearchUsersOptionsDto, UpdateUserDto } from '../dtos';
+
+import { PageDto, PageOptionsDto } from '@/common';
+
 import { UsersService } from '../services';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '../entities';
 
 @Controller('users')
 export class UsersController {
@@ -24,24 +30,44 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
+  /**
+   * Retrieves a paginated list of users based on search and page options.
+   * @param pageOptionsDto Pagination options.
+   * @param searchOptionsDto Search options.
+   * @returns Paginated list of users.
+   */
+  @SkipThrottle()
+  @Get()
+  async findAll(
+    @Query() pageOptionsDto: PageOptionsDto,
+    @Query() searchUsersOptionsDto: SearchUsersOptionsDto,
+  ): Promise<PageDto<User[]>> {
+    return await this.usersService.findAll(
+      pageOptionsDto,
+      searchUsersOptionsDto,
+    );
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(id, updateUserDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(id, updateUserDto);
+  }
 
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(id);
-  // }
+  /**
+   * Removes a user by ID.
+   * @param id - The ID of the user to remove.
+   * @returns A success message upon successful removal.
+   * @throws NotFoundException if the user is not found.
+   * @throws UnauthorizedException if attempting to delete a special user.
+   */
+  @Delete(':id')
+  // @Auth([ValidServices.Security], [ValidAccess.Delete])
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.usersService.remove(id);
+  }
 }

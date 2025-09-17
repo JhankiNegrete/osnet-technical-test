@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 // import { Order } from './order.entity';
 
 export enum UserRole {
@@ -47,4 +53,10 @@ export class User {
 
   // @OneToMany(() => Order, (order) => order.user)
   // orders: Order[];
+
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamp' })
+  updatedAt!: Date;
 }
