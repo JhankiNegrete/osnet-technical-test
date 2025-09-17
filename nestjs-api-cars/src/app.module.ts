@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { CacheModule } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
-// import { RedisOptions } from './config/cache';
+import { RedisOptions } from './config/cache';
+import { ThrottlerConfig } from './config/throttler';
 import { MainDataSourceConfig } from './config/database';
+
+import { UsersModule } from './api/users/users.module';
 
 @Module({
   imports: [
@@ -12,8 +17,15 @@ import { MainDataSourceConfig } from './config/database';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync(MainDataSourceConfig),
-    // CacheModule.registerAsync(RedisOptions),
+    ThrottlerModule.forRootAsync(ThrottlerConfig),
+    CacheModule.registerAsync(RedisOptions),
+    UsersModule,
   ],
-  //providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
