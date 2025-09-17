@@ -14,15 +14,18 @@ import {
 } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 
-import { CreateUserDto, SearchUsersOptionsDto, UpdateUserDto } from '../dtos';
-
 import { PageDto, PageOptionsDto } from '@/common';
-import { JwtAuthGuard } from '@/api/auth/guard';
+
+import { CreateUserDto, SearchUsersOptionsDto, UpdateUserDto } from '../dtos';
 
 import { UsersService } from '../services';
 import { User } from '../entities';
 
-@UseGuards(JwtAuthGuard)
+import { Roles } from '@/common/decorators';
+import { JwtAuthGuard } from '@/api/auth/guard';
+import { OwnershipGuard, RolesGuard } from '@/common/guards';
+
+@UseGuards(JwtAuthGuard, RolesGuard) // global para todos los endpoints
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -33,12 +36,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  /**
-   * Retrieves a paginated list of users based on search and page options.
-   * @param pageOptionsDto Pagination options.
-   * @param searchOptionsDto Search options.
-   * @returns Paginated list of users.
-   */
   @SkipThrottle()
   @Get()
   async findAll(
@@ -57,19 +54,15 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @Roles('admin', 'client')
+  @UseGuards(OwnershipGuard) // admin puede todo, client solo el suyo
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
-  /**
-   * Removes a user by ID.
-   * @param id - The ID of the user to remove.
-   * @returns A success message upon successful removal.
-   * @throws NotFoundException if the user is not found.
-   * @throws UnauthorizedException if attempting to delete a special user.
-   */
   @Delete(':id')
-  // @Auth([ValidServices.Security], [ValidAccess.Delete])
+  @Roles('admin', 'client') // permitimos ambos
+  @UseGuards(OwnershipGuard) // admin borra a cualquiera, client solo el suyo
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return await this.usersService.remove(id);
   }
