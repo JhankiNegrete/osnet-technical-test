@@ -23,12 +23,16 @@ Incluye integración con **Redis** para cache y autenticación con **JWT**.
 ### Usuario Admin por defecto
 ```json
 {
-  "email": "admin@example.com",
-  "password": "Admin@123",
-  "role": "admin",
-  "firstName": "Admin",
-  "lastName": "User",
-  "isActive": true
+    "email": "admin@auto.com",
+    "password": "Admin123!",
+    "role": "admin",
+    "firstName": "Admin",
+    "lastName": "User",
+    "phone": "3000000000",
+    "address": "Main Street 1",
+    "city": "Bogota",
+    "country": "Colombia",
+    "isActive": true
 }
 ```
 
