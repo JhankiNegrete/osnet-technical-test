@@ -4,6 +4,24 @@ Este proyecto es una API desarrollada en **NestJS** como prueba técnica.
 Su objetivo es gestionar usuarios, productos (autos), órdenes y pagos con **PayPal (modo sandbox)**.  
 Adicionalmente, la API incluye integración con **Redis** para cache.
 
+> 🔹 **Usuario Admin por defecto**:  
+> Para pruebas y administración, se incluye un usuario **admin genérico**:
+>
+> ```json
+> {
+>   "email": "admin@auto.com",
+>   "password": "Admin123!",
+>   "role": "admin",
+>   "firstName": "Admin",
+>   "lastName": "User",
+>   "phone": "3000000000",
+>   "address": "Main Street 1",
+>   "city": "Bogota",
+>   "country": "Colombia",
+>   "isActive": true
+> }
+> ```
+
 ---
 
 ## 📦 Tecnologías principales
@@ -51,6 +69,8 @@ PAYPAL_CLIENT_SECRET=your-sandbox-client-secret
 ```
 
 > ⚠️ Los valores de `PAYPAL_CLIENT_ID` y `PAYPAL_CLIENT_SECRET` se obtienen desde el [Dashboard de PayPal Developer](https://developer.paypal.com/).
+
+> 💾 Además, en la ruta `./backup_db` se encuentra un archivo **SQL de respaldo** para inicializar la base de datos con datos de ejemplo.
 
 ---
 
@@ -150,9 +170,12 @@ export class ProductsService {
 - Redis debe estar corriendo en el contenedor definido en `docker-compose`.
 - JWT se usa para autenticación en endpoints protegidos.
 - En producción, asegúrate de usar secretos seguros en `.env.prod`.
+- Existe un usuario **admin por defecto** para pruebas y administración (`admin@auto.com` / `Admin123!`).
+- Archivo de respaldo SQL disponible en `./backup_db`.
 
 ---
 
 ## 👨‍💻 Autor
 
-Desarrollado por **Jhan Carlos Negrete** ✨  
+Desarrollado por **Jhan Carlos Negrete** ✨
+
