@@ -140,7 +140,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('15825ec0-8e21-4e2d-a16f-d5b3b671499d','maria.gomez@example.com','$2b$10$AWe7oMNBr.AabQYXFJCq5.uG7izlpIZ8ggyz4cTUXEQlH5rWcYhdS','client','María','Gómez','3011234567','Carrera 28 #17-21','Medellín','Colombia',1,'2025-09-17 03:36:16.169268','2025-09-17 04:18:17.000000'),('1d832f0b-8b2f-45b8-864b-002c83885e7c','jhan.borrado@example.com','$2b$10$Qngu2qwVfzCkszG/Ix2RT.m9ecXzNxT2HHtxGueQ8vzUf8akCMywm','client','Jhan','Negrete','3009876543','Calle 45 #67-89','Barranquilla','Colombia',1,'2025-09-17 12:43:33.874442','2025-09-17 12:43:33.874442'),('227d2265-6861-49b2-91b0-5d5a1846b364','jhan.dev@example.com','$2b$10$TcG9uRnpQSB/.P1h.NKpX.WKJpyHKGi1GzoKhf2ZBB2j4QO3Khavm','admin','Jhan','Negrete','3009876543','Calle 45 #67-89','Barranquilla','Colombia',1,'2025-09-17 03:36:16.169268','2025-09-17 10:38:36.726273'),('e4b9310d-ae7d-41d8-b888-61ace9fbf5c1','jhan.borrado2@example.com','$2b$10$Aih54brjg51TkJSKJVbc3udSIMx6h9PXbE.JXDogMFToINIZZkZTS','client','Jhan','Negrete','3009876543','Calle 45 #67-89','Barranquilla','Colombia',1,'2025-09-17 17:52:18.005620','2025-09-17 17:52:18.005620');
+INSERT INTO `users` VALUES ('15825ec0-8e21-4e2d-a16f-d5b3b671499d','maria.gomez@example.com','$2b$10$AWe7oMNBr.AabQYXFJCq5.uG7izlpIZ8ggyz4cTUXEQlH5rWcYhdS','client','María','Gómez','3011234567','Carrera 28 #17-21','Medellín','Colombia',1,'2025-09-17 03:36:16.169268','2025-09-17 04:18:17.000000'),('1d832f0b-8b2f-45b8-864b-002c83885e7c','jhan.borrado@example.com','$2b$10$Qngu2qwVfzCkszG/Ix2RT.m9ecXzNxT2HHtxGueQ8vzUf8akCMywm','client','Jhan','Negrete','3009876543','Calle 45 #67-89','Barranquilla','Colombia',1,'2025-09-17 12:43:33.874442','2025-09-17 12:43:33.874442'),('227d2265-6861-49b2-91b0-5d5a1846b364','jhan.dev@example.com','$2b$10$TcG9uRnpQSB/.P1h.NKpX.WKJpyHKGi1GzoKhf2ZBB2j4QO3Khavm','admin','Jhan','Negrete','3009876543','Calle 45 #67-89','Barranquilla','Colombia',1,'2025-09-17 03:36:16.169268','2025-09-17 10:38:36.726273'),('2bb20b7c-5b75-4166-b152-1606f18a5b0e','admin@auto.com','$2b$10$.RimtACVBi2NfwGeAABQzek.9Y8KEaYAzvTQDDanSt1Yo3d3LDa2i','admin','Admin','User','3000000000','Main Street 1','Bogota','Colombia',1,'2025-09-18 04:43:45.394600','2025-09-18 04:43:45.394600'),('e4b9310d-ae7d-41d8-b888-61ace9fbf5c1','jhan.borrado2@example.com','$2b$10$Aih54brjg51TkJSKJVbc3udSIMx6h9PXbE.JXDogMFToINIZZkZTS','client','Jhan','Negrete','3009876543','Calle 45 #67-89','Barranquilla','Colombia',1,'2025-09-17 17:52:18.005620','2025-09-17 17:52:18.005620');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -153,4 +153,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-17 23:34:14
+-- Dump completed on 2025-09-17 23:43:54
