@@ -33,6 +33,9 @@ export class Order {
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: OrderStatus;
 
+  @Column({ type: 'varchar', nullable: true })
+  paypalOrderId: string | null;
+
   @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
   createdAt!: Date;
 

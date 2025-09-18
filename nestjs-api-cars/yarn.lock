@@ -1682,6 +1682,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@paypal/checkout-server-sdk@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@paypal/checkout-server-sdk@npm:1.0.3"
+  dependencies:
+    "@paypal/paypalhttp": "npm:^1.0.1"
+  checksum: 10c0/b77273ee8ee7a6c9354b09cf12f36ecfe4a65009f2be508e2206f0ac83319f49300fc0a03d71ca8cb1a10065732c142615f6427b48dc392bffcefa57e7883c35
+  languageName: node
+  linkType: hard
+
+"@paypal/paypalhttp@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@paypal/paypalhttp@npm:1.0.1"
+  checksum: 10c0/1ce08dc24c5eb69d2e0fd5d8a847b61cac494343c24325194c288cb5a5c3c815164e28253f804693acb7dccc56cdca5ad11be398784e359d439d0deeb059a04a
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -2298,6 +2314,24 @@ __metadata:
   dependencies:
     "@types/express": "npm:*"
   checksum: 10c0/58ca21800b7910385961b7a3dc9071fc9db6223242b96ff88d16c9d004ce7173524e7c17c63363595565af3f85ad932ee301efc8cc3e378bea172eebc9e07703
+  languageName: node
+  linkType: hard
+
+"@types/paypal__checkout-server-sdk@npm:^1":
+  version: 1.0.8
+  resolution: "@types/paypal__checkout-server-sdk@npm:1.0.8"
+  dependencies:
+    "@types/paypal__paypalhttp": "npm:*"
+  checksum: 10c0/498cf561f30cda0c784ff9b8ec74a1129da104c1b3798c1f3f953fb399fa377e61b993e607461a5ed11c40f76abf0bd66883246416a3cb73d8ba7f9feb599c16
+  languageName: node
+  linkType: hard
+
+"@types/paypal__paypalhttp@npm:*":
+  version: 1.0.3
+  resolution: "@types/paypal__paypalhttp@npm:1.0.3"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/1ddb5dfaa4f68a57d5042961cb99ffe1ff775053d41d69780b9b7150478cd453ad0899e0b668a7f6002bb6c2a525780e765179d1db6de7df5a338775a354cb63
   languageName: node
   linkType: hard
 
@@ -6799,6 +6833,7 @@ __metadata:
     "@nestjs/testing": "npm:^11.0.1"
     "@nestjs/throttler": "npm:^6.4.0"
     "@nestjs/typeorm": "npm:^11.0.0"
+    "@paypal/checkout-server-sdk": "npm:^1.0.3"
     "@swc/cli": "npm:^0.6.0"
     "@swc/core": "npm:^1.10.7"
     "@types/bcrypt": "npm:^6.0.0"
@@ -6808,6 +6843,7 @@ __metadata:
     "@types/node": "npm:^22.10.7"
     "@types/passport": "npm:^0"
     "@types/passport-jwt": "npm:^4.0.1"
+    "@types/paypal__checkout-server-sdk": "npm:^1"
     "@types/supertest": "npm:^6.0.2"
     bcrypt: "npm:^6.0.0"
     cache-manager: "npm:^7.2.0"

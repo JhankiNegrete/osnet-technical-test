@@ -8,10 +8,15 @@ import { OrderItem } from '../orderItems/entities';
 
 import { OrdersService } from './services';
 import { OrdersController } from './controllers';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderItem, Product, User])],
+  imports: [
+    TypeOrmModule.forFeature([Order, OrderItem, Product, User]),
+    PaymentsModule,
+  ],
   providers: [OrdersService],
   controllers: [OrdersController],
+  exports: [OrdersService],
 })
 export class OrdersModule {}

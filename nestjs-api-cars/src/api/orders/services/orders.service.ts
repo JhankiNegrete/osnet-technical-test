@@ -17,6 +17,7 @@ import {
   SearchOrdersOptionsDto,
   UpdateOrderDto,
 } from '../dtos';
+import { PaypalService } from '@/api/payments/services';
 
 @Injectable()
 export class OrdersService extends BaseService {
@@ -32,6 +33,8 @@ export class OrdersService extends BaseService {
     private readonly ordersDatasource: DataSource,
 
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+
+    private readonly paypalService: PaypalService,
   ) {
     super(ordersDatasource);
   }
@@ -104,10 +107,11 @@ export class OrdersService extends BaseService {
     const user = await this.userRepository.findOne({
       where: { id: createOrderDto.userId },
     });
-    if (!user)
+    if (!user) {
       throw new NotFoundException(
         `User with id ${createOrderDto.userId} not found`,
       );
+    }
 
     const order = this.orderRepository.create({
       user,
@@ -123,10 +127,11 @@ export class OrdersService extends BaseService {
       const product = await this.productRepository.findOne({
         where: { id: itemDto.productId },
       });
-      if (!product)
+      if (!product) {
         throw new NotFoundException(
           `Product with id ${itemDto.productId} not found`,
         );
+      }
 
       if (product.stock < itemDto.quantity) {
         throw new NotFoundException(
@@ -151,6 +156,10 @@ export class OrdersService extends BaseService {
     await this.orderItemRepository.save(items);
 
     order.total = total;
+
+    const paypalOrder = await this.paypalService.createOrder(total);
+    order.paypalOrderId = paypalOrder.id;
+
     await this.orderRepository.save(order);
 
     await this.cacheManager.del(`orders:user:${user.id}`);
@@ -160,6 +169,9 @@ export class OrdersService extends BaseService {
       status: order.status,
       total: order.total,
       createdAt: order.createdAt,
+      paypalOrderId: order.paypalOrderId,
+      approvalLinks:
+        paypalOrder.links?.filter((l) => l.rel === 'approve') || [],
       user: {
         id: user.id,
         firstName: user.firstName,
@@ -172,6 +184,25 @@ export class OrdersService extends BaseService {
         priceUnit: i.price,
         subtotal: i.price * i.quantity,
       })),
+    };
+  }
+
+  async completePaypalOrder(orderId: string) {
+    const order = await this.orderRepository.findOne({
+      where: { paypalOrderId: orderId },
+      relations: ['user', 'items', 'items.product'],
+    });
+    if (!order)
+      throw new NotFoundException(`Order with PayPal ID ${orderId} not found`);
+
+    const captureResult = await this.paypalService.captureOrder(orderId);
+
+    order.status = OrderStatus.COMPLETED;
+    await this.orderRepository.save(order);
+
+    return {
+      order,
+      captureResult,
     };
   }
 
