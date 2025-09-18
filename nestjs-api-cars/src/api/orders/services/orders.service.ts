@@ -1,15 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { Order } from '../entities';
+import { BaseService, PageDto, PageOptionsDto } from '@/common';
+import { Order, OrderStatus } from '../entities';
+
 import { User } from '@/api/users/entities';
 import { Product } from '@/api/products/entities';
 import { OrderItem } from '@/api/orderItems/entities';
-import { CreateOrderDto, UpdateOrderDto } from '../dtos';
+
+import {
+  CreateOrderDto,
+  SearchOrdersOptionsDto,
+  UpdateOrderDto,
+} from '../dtos';
 
 @Injectable()
-export class OrdersService {
+export class OrdersService extends BaseService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
@@ -18,7 +25,75 @@ export class OrdersService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-  ) {}
+
+    private readonly ordersDatasource: DataSource,
+  ) {
+    super(ordersDatasource);
+  }
+
+  async findAll(
+    pageOptionsDto: PageOptionsDto,
+    searchOrdersOptionsDto: SearchOrdersOptionsDto,
+  ): Promise<PageDto<Order[]>> {
+    const model = 'orders';
+
+    const queryBuilder = this.orderRepository
+      .createQueryBuilder(model)
+      .leftJoinAndSelect(`${model}.user`, 'user')
+      .leftJoinAndSelect(`${model}.items`, 'items')
+      .leftJoinAndSelect(`items.product`, 'product')
+      .select([
+        `${model}.id`,
+        `${model}.status`,
+        `${model}.total`,
+        `${model}.createdAt`,
+        `${model}.updatedAt`,
+        `user.id`,
+        `user.firstName`,
+        `user.lastName`,
+        `items.id`,
+        `items.quantity`,
+        `items.price`,
+        `product.id`,
+        `product.name`,
+      ]);
+
+    const searchKeys = Object.keys(
+      searchOrdersOptionsDto,
+    ) as (keyof SearchOrdersOptionsDto)[];
+
+    for (const key of searchKeys) {
+      const value = searchOrdersOptionsDto[key];
+      if (value === undefined || value === '' || value === null) {
+        continue;
+      }
+
+      if (key === 'status') {
+        queryBuilder.andWhere(`${model}.status = :status`, { status: value });
+      }
+
+      if (key === 'userId') {
+        queryBuilder.andWhere(`user.id = :userId`, { userId: value });
+      }
+
+      if (key === 'fromDate') {
+        queryBuilder.andWhere(`${model}.createdAt >= :fromDate`, {
+          fromDate: value,
+        });
+      }
+      if (key === 'toDate') {
+        queryBuilder.andWhere(`${model}.createdAt <= :toDate`, {
+          toDate: value,
+        });
+      }
+    }
+
+    return await this.queryBuilderPaginationExecute(
+      queryBuilder,
+      model,
+      pageOptionsDto,
+    );
+  }
 
   async create(createOrderDto: CreateOrderDto) {
     const user = await this.userRepository.findOne({
@@ -29,9 +104,16 @@ export class OrdersService {
         `User with id ${createOrderDto.userId} not found`,
       );
 
-    const items: OrderItem[] = [];
+    const order = this.orderRepository.create({
+      user,
+      status: OrderStatus.PENDING,
+      total: 0,
+    });
+    await this.orderRepository.save(order);
 
     let total = 0;
+    const items: OrderItem[] = [];
+
     for (const itemDto of createOrderDto.items) {
       const product = await this.productRepository.findOne({
         where: { id: itemDto.productId },
@@ -41,24 +123,50 @@ export class OrdersService {
           `Product with id ${itemDto.productId} not found`,
         );
 
-      const itemTotal = product.price * itemDto.quantity;
-      total += itemTotal;
+      if (product.stock < itemDto.quantity) {
+        throw new NotFoundException(
+          `Not enough stock for product ${product.name}`,
+        );
+      }
 
       const orderItem = this.orderItemRepository.create({
+        order,
         product,
         quantity: itemDto.quantity,
-        price: itemTotal,
+        price: product.price,
       });
+
+      total += product.price * itemDto.quantity;
       items.push(orderItem);
+
+      product.stock -= itemDto.quantity;
+      await this.productRepository.save(product);
     }
 
-    const order = this.orderRepository.create({
-      user,
-      items,
-      total,
-    });
+    await this.orderItemRepository.save(items);
 
-    return await this.orderRepository.save(order);
+    order.total = total;
+    await this.orderRepository.save(order);
+
+    // 🔹 Armar respuesta enriquecida
+    return {
+      id: order.id,
+      status: order.status,
+      total: order.total,
+      createdAt: order.createdAt,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+      items: items.map((i) => ({
+        productId: i.product.id,
+        name: i.product.name,
+        quantity: i.quantity,
+        priceUnit: i.price,
+        subtotal: i.price * i.quantity,
+      })),
+    };
   }
 
   async findOne(id: string) {

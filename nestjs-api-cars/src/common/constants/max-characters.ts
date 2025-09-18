@@ -3,7 +3,7 @@ export enum MaxCharacter {
   MAX_NAMES = 100,
   MIN_USERS = 5,
   MAX_USERS = 50,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+
   MIN_PASSWORDS = 6,
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   MAX_PASSWORDS = 50,

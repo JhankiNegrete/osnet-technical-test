@@ -1,24 +1,11 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Param,
-  Body,
-  Patch,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, Body, Patch, Delete } from '@nestjs/common';
 
 import { OrderItemsService } from '../services';
-import { CreateOrderItemDto, UpdateOrderItemDto } from '../dtos';
+import { UpdateOrderItemDto } from '../dtos';
 
 @Controller('order-items')
 export class OrderItemsController {
   constructor(private readonly orderItemsService: OrderItemsService) {}
-
-  @Post()
-  create(@Body() dto: CreateOrderItemDto) {
-    return this.orderItemsService.create(dto);
-  }
 
   @Get()
   findAll() {
