@@ -1,6 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 import { BaseService, PageDto, PageOptionsDto } from '@/common';
 import { Order, OrderStatus } from '../entities';
@@ -27,6 +30,8 @@ export class OrdersService extends BaseService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
 
     private readonly ordersDatasource: DataSource,
+
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {
     super(ordersDatasource);
   }
@@ -148,7 +153,8 @@ export class OrdersService extends BaseService {
     order.total = total;
     await this.orderRepository.save(order);
 
-    // 🔹 Armar respuesta enriquecida
+    await this.cacheManager.del(`orders:user:${user.id}`);
+
     return {
       id: order.id,
       status: order.status,
@@ -170,21 +176,44 @@ export class OrdersService extends BaseService {
   }
 
   async findOne(id: string) {
+    const cacheKey = `order:${id}`;
+    const cached = await this.cacheManager.get<Order>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const order = await this.orderRepository.findOne({ where: { id } });
     if (!order) throw new NotFoundException(`Order with id ${id} not found`);
+
+    await this.cacheManager.set(cacheKey, order, 60 * 1000);
     return order;
   }
 
   async findByUser(userId: string) {
+    const cacheKey = `orders:user:${userId}`;
+    const cached = await this.cacheManager.get<Order[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     const orders = await this.orderRepository.find({
       where: { user: { id: userId } },
     });
+
+    await this.cacheManager.set(cacheKey, orders, 60 * 1000);
     return orders;
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepository.preload({ id, ...updateOrderDto });
     if (!order) throw new NotFoundException(`Order with id ${id} not found`);
-    return this.orderRepository.save(order);
+    const saved = await this.orderRepository.save(order);
+
+    await this.cacheManager.del(`order:${id}`);
+    if (order.user?.id) {
+      await this.cacheManager.del(`orders:user:${order.user.id}`);
+    }
+
+    return saved;
   }
 }
