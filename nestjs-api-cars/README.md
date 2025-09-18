@@ -1,98 +1,158 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚗 Cars API - Technical Test (NestJS)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este proyecto es una API desarrollada en **NestJS** como prueba técnica.  
+Su objetivo es gestionar usuarios, productos (autos), órdenes y pagos con **PayPal (modo sandbox)**.  
+Adicionalmente, la API incluye integración con **Redis** para cache.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📦 Tecnologías principales
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [NestJS](https://nestjs.com/) - Framework backend en Node.js
+- [TypeORM](https://typeorm.io/) - ORM para MySQL
+- [MySQL](https://www.mysql.com/) - Base de datos relacional
+- [Redis](https://redis.io/) - Cache en memoria
+- [PayPal REST SDK](https://developer.paypal.com/) - Pasarela de pagos
+- [Docker & Docker Compose](https://www.docker.com/) - Contenerización
 
-## Project setup
+---
 
-```bash
-$ yarn install
+## ⚙️ Configuración del entorno
+
+El proyecto requiere un archivo `.env` (para desarrollo) o `.env.prod` (para producción).  
+Ejemplo de configuración en **producción**:
+
+```env
+# ==========================
+# Database
+# ==========================
+DB_HOST=api-cars-db
+DB_PORT=3306
+DB_USERNAME=store_user
+DB_PASSWORD=st0r3_us3r
+DB_NAME=cars_api_db
+
+# ==========================
+# Redis
+# ==========================
+REDIS_HOST=redis-db
+REDIS_PORT=6379
+
+# ==========================
+# JWT
+# ==========================
+JWT_SECRET=mysecretkey
+
+# ==========================
+# PayPal
+# ==========================
+PAYPAL_CLIENT_ID=your-sandbox-client-id
+PAYPAL_CLIENT_SECRET=your-sandbox-client-secret
 ```
 
-## Compile and run the project
+> ⚠️ Los valores de `PAYPAL_CLIENT_ID` y `PAYPAL_CLIENT_SECRET` se obtienen desde el [Dashboard de PayPal Developer](https://developer.paypal.com/).
+
+---
+
+## 🚀 Levantar el proyecto en local
+
+1. Clonar el repositorio:
+
+   ```bash
+   git clone https://github.com/JhankiNegrete/osnet-technical-test.git
+   cd osnet-technical-test/nestjs-api-cars
+   ```
+
+2. Instalar dependencias:
+
+   ```bash
+   npm install
+   ```
+
+3. Levantar con Docker en modo desarrollo:
+
+   ```bash
+   docker-compose up --build -d
+   ```
+
+---
+
+## 🌐 Despliegue en Producción
+
+El proyecto cuenta con un archivo `docker-compose.prod.yaml`.  
+Para levantarlo en un servidor (ejemplo: VPS o nube):
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build -d
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ yarn run test
+## 📌 Endpoints principales
 
-# e2e tests
-$ yarn run test:e2e
+- **Auth**
+  - `POST /auth/login`
+  - `POST /auth/register`
 
-# test coverage
-$ yarn run test:cov
+- **Users**
+  - `GET /users`
+  - `GET /users/:id`
+
+- **Products (Autos)**
+  - `POST /products`
+  - `GET /products`
+  - `GET /products/:id`
+
+- **Orders**
+  - `POST /orders`
+  - `GET /orders/:id`
+
+- **Order Items**
+  - `POST /order-items`
+  - `GET /order-items/:id`
+
+- **Payments (PayPal Sandbox)**
+  - `POST /payments/create` → genera la orden en PayPal
+  - `POST /payments/capture` → captura el pago confirmado
+
+---
+
+## 🧩 Redis en el proyecto
+
+Redis se utiliza como sistema de cache.  
+Ejemplo de uso en un servicio:
+
+```ts
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
+
+@Injectable()
+export class ProductsService {
+  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
+
+  async findAll() {
+    const cached = await this.cacheManager.get('products');
+    if (cached) return cached;
+
+    const products = await this.productRepository.find();
+    await this.cacheManager.set('products', products, 60_000); // TTL: 60s
+    return products;
+  }
+}
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🔑 Notas importantes
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- PayPal está configurado en **modo sandbox** → solo pruebas, sin dinero real.
+- Redis debe estar corriendo en el contenedor definido en `docker-compose`.
+- JWT se usa para autenticación en endpoints protegidos.
+- En producción, asegúrate de usar secretos seguros en `.env.prod`.
 
-```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
-```
+---
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 👨‍💻 Autor
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Desarrollado por **Jhan Carlos Negrete** ✨  
