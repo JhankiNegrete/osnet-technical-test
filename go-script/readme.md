@@ -12,7 +12,7 @@ Script en **Go** para realizar pings concurrentes a 3000 IPs privadas desde `./u
 2. Ejecutar:
 
 ```bash
-go run main.go
+go run src/multi-ping.go
 ```
 
 ## Detalles

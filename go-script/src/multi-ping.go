@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	numWorkers = 100 
+	numWorkers = 100
 )
 
 type pingResult struct {
@@ -19,7 +19,8 @@ type pingResult struct {
 	Status bool
 }
 
-func pingHost(ip string, ch chan pingResult) {
+
+func pingHost(ip string, ch chan<- pingResult) {
 	pinger, err := ping.NewPinger(ip)
 	if err != nil {
 		log.Printf("Error al crear el pinger para %s: %v", ip, err)
@@ -50,8 +51,7 @@ func worker(id int, jobs <-chan string, results chan<- pingResult) {
 }
 
 func main() {
-	
-	data, err := os.ReadFile("./utils/ips_private.txt")
+	data, err := os.ReadFile("./utils/ips.txt")
 	if err != nil {
 		log.Fatalf("No se pudo leer el archivo de IPs: %v", err)
 	}
@@ -68,18 +68,15 @@ func main() {
 	jobs := make(chan string, len(ips))
 	results := make(chan pingResult, len(ips))
 
-	
 	for w := 1; w <= numWorkers; w++ {
 		go worker(w, jobs, results)
 	}
 
-	
 	for _, ip := range ips {
 		jobs <- ip
 	}
 	close(jobs)
 
-	
 	for i := 0; i < len(ips); i++ {
 		result := <-results
 		if result.Status {
