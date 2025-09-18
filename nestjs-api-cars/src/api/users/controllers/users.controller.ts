@@ -15,9 +15,7 @@ import {
 import { SkipThrottle } from '@nestjs/throttler';
 
 import { PageDto, PageOptionsDto } from '@/common';
-
 import { CreateUserDto, SearchUsersOptionsDto, UpdateUserDto } from '../dtos';
-
 import { UsersService } from '../services';
 import { User } from '../entities';
 
@@ -30,6 +28,11 @@ import { OwnershipGuard, RolesGuard } from '@/common/guards';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  /**
+   * Create a new user.
+   * @param createUserDto - DTO containing user data.
+   * @returns The created user.
+   */
   @Post()
   @Roles('admin', 'client')
   @UseGuards(OwnershipGuard)
@@ -38,6 +41,12 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  /**
+   * Get a paginated list of users with optional search filters.
+   * @param pageOptionsDto - Pagination options (page, limit, etc.)
+   * @param searchUsersOptionsDto - Optional search filters (name, email, role, etc.)
+   * @returns Paginated list of users.
+   */
   @SkipThrottle()
   @Get()
   async findAll(
@@ -50,11 +59,22 @@ export class UsersController {
     );
   }
 
+  /**
+   * Get a single user by ID.
+   * @param id - User ID.
+   * @returns The found user.
+   */
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
+  /**
+   * Update a user by ID.
+   * @param id - User ID.
+   * @param updateUserDto - DTO containing updated user data.
+   * @returns The updated user.
+   */
   @Patch(':id')
   @Roles('admin', 'client')
   @UseGuards(OwnershipGuard)
@@ -62,6 +82,11 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  /**
+   * Remove a user by ID.
+   * @param id - User ID.
+   * @returns A message confirming deletion.
+   */
   @Delete(':id')
   @Roles('admin', 'client')
   @UseGuards(OwnershipGuard)

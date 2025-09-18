@@ -13,6 +13,12 @@ export class PaypalService {
     this.client = new checkoutNodeJssdk.core.PayPalHttpClient(environment);
   }
 
+  /**
+   * Create a PayPal order
+   * @param total Total amount of the order
+   * @param currency Currency code (default: USD)
+   * @returns PayPal order object containing ID and approval links
+   */
   async createOrder(total: number, currency = 'USD') {
     const request = new checkoutNodeJssdk.orders.OrdersCreateRequest();
     request.prefer('return=representation');
@@ -32,9 +38,15 @@ export class PaypalService {
     return response.result;
   }
 
+  /**
+   * Capture a previously created PayPal order
+   * @param orderId PayPal order ID to capture
+   * @returns Capture result from PayPal including payment status and details
+   */
   async captureOrder(orderId: string) {
     const request = new checkoutNodeJssdk.orders.OrdersCaptureRequest(orderId);
 
+    // The SDK requires a requestBody, even if empty
     request.requestBody({} as any);
 
     const response = await this.client.execute(request);

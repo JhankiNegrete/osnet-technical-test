@@ -39,6 +39,12 @@ export class OrdersService extends BaseService {
     super(ordersDatasource);
   }
 
+  /**
+   * Get a paginated list of orders with optional filters
+   * @param pageOptionsDto Pagination options (page, limit)
+   * @param searchOrdersOptionsDto Filters like status, userId, date range, minTotal, maxTotal
+   * @returns Paginated list of orders
+   */
   async findAll(
     pageOptionsDto: PageOptionsDto,
     searchOrdersOptionsDto: SearchOrdersOptionsDto,
@@ -103,6 +109,11 @@ export class OrdersService extends BaseService {
     );
   }
 
+  /**
+   * Create a new order with items and initialize PayPal order
+   * @param createOrderDto Data to create an order including userId and items
+   * @returns Order details with PayPal approval links
+   */
   async create(createOrderDto: CreateOrderDto) {
     const user = await this.userRepository.findOne({
       where: { id: createOrderDto.userId },
@@ -187,6 +198,11 @@ export class OrdersService extends BaseService {
     };
   }
 
+  /**
+   * Capture a PayPal order and mark it as COMPLETED
+   * @param orderId PayPal order ID
+   * @returns The updated order and PayPal capture result
+   */
   async completePaypalOrder(orderId: string) {
     const order = await this.orderRepository.findOne({
       where: { paypalOrderId: orderId },
@@ -206,6 +222,11 @@ export class OrdersService extends BaseService {
     };
   }
 
+  /**
+   * Get a single order by ID (with cache)
+   * @param id Order ID
+   * @returns The requested order
+   */
   async findOne(id: string) {
     const cacheKey = `order:${id}`;
     const cached = await this.cacheManager.get<Order>(cacheKey);
@@ -220,6 +241,11 @@ export class OrdersService extends BaseService {
     return order;
   }
 
+  /**
+   * Get all orders of a specific user (with cache)
+   * @param userId User ID
+   * @returns Array of orders for the user
+   */
   async findByUser(userId: string) {
     const cacheKey = `orders:user:${userId}`;
     const cached = await this.cacheManager.get<Order[]>(cacheKey);
@@ -235,6 +261,12 @@ export class OrdersService extends BaseService {
     return orders;
   }
 
+  /**
+   * Update an order partially
+   * @param id Order ID
+   * @param updateOrderDto Partial order data
+   * @returns The updated order
+   */
   async update(id: string, updateOrderDto: UpdateOrderDto) {
     const order = await this.orderRepository.preload({ id, ...updateOrderDto });
     if (!order) throw new NotFoundException(`Order with id ${id} not found`);

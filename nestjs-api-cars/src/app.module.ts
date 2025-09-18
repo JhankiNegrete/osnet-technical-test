@@ -14,6 +14,7 @@ import { AuthModule } from './api/auth/auth.module';
 import { OrderItemsModule } from './api/orderItems/orderItems.module';
 import { OrdersModule } from './api/orders/orders.module';
 import { ProductsModule } from './api/products/products.module';
+import { PaymentsModule } from './api/payments/payments.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProductsModule } from './api/products/products.module';
     OrderItemsModule,
     OrdersModule,
     ProductsModule,
+    PaymentsModule,
   ],
   providers: [
     {

@@ -20,11 +20,22 @@ export class ProductsService extends BaseService {
     super(productDatasource);
   }
 
+  /**
+   * Create a new product in the auto products store.
+   * @param createProductDto - DTO containing product data.
+   * @returns The created product.
+   */
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const product = this.productRepository.create(createProductDto);
     return await this.productRepository.save(product);
   }
 
+  /**
+   * Get a paginated list of products with optional search filters.
+   * @param pageOptionsDto - Pagination options (page, limit, etc.)
+   * @param searchProductsOptionsDto - Optional search filters (name, description, isActive)
+   * @returns Paginated list of products.
+   */
   async findAll(
     pageOptionsDto: PageOptionsDto,
     searchProductsOptionsDto: SearchProductsOptionsDto,
@@ -64,6 +75,12 @@ export class ProductsService extends BaseService {
     );
   }
 
+  /**
+   * Find a product by its unique ID.
+   * @param id - Product ID.
+   * @throws NotFoundException if the product does not exist.
+   * @returns The found product.
+   */
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findOne({ where: { id } });
     if (!product) {
@@ -72,6 +89,12 @@ export class ProductsService extends BaseService {
     return product;
   }
 
+  /**
+   * Update an existing product by its ID.
+   * @param id - Product ID.
+   * @param updateProductDto - DTO containing updated product data.
+   * @returns The updated product.
+   */
   async update(
     id: string,
     updateProductDto: UpdateProductDto,
@@ -81,6 +104,11 @@ export class ProductsService extends BaseService {
     return await this.productRepository.save(product);
   }
 
+  /**
+   * Remove a product by its ID.
+   * @param id - Product ID.
+   * @returns A message confirming the deletion.
+   */
   async remove(id: string): Promise<string> {
     const product = await this.findOne(id);
     await this.productRepository.remove(product);
