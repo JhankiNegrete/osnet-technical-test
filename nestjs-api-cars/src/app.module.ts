@@ -11,6 +11,9 @@ import { MainDataSourceConfig } from './config/database';
 
 import { UsersModule } from './api/users/users.module';
 import { AuthModule } from './api/auth/auth.module';
+import { OrderItemsModule } from './api/orderItems/orderItems.module';
+import { OrdersModule } from './api/orders/orders.module';
+import { ProductsModule } from './api/products/products.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { AuthModule } from './api/auth/auth.module';
     CacheModule.registerAsync(RedisOptions),
     UsersModule,
     AuthModule,
+    OrderItemsModule,
+    OrdersModule,
+    ProductsModule,
   ],
   providers: [
     {

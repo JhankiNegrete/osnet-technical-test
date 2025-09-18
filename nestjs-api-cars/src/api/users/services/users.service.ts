@@ -56,7 +56,7 @@ export class UsersService extends BaseService {
 
     const user = this.userRepository.create({
       ...userData,
-      password: encodePassword(password) as string,
+      password: encodePassword(password),
       role: role ?? UserRole.CLIENT,
     });
 
@@ -158,7 +158,7 @@ export class UsersService extends BaseService {
 
     let newPassword = user.password;
     if (updateUserDto.password) {
-      newPassword = encodePassword(updateUserDto.password) as string;
+      newPassword = encodePassword(updateUserDto.password);
     }
 
     const preloadUser = await this.userRepository.preload({

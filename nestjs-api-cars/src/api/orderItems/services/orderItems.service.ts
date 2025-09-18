@@ -1,0 +1,62 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { OrderItem } from '../entities';
+import { CreateOrderItemDto, UpdateOrderItemDto } from '../dtos';
+
+import { Order } from '@/api/orders/entities';
+import { Product } from '@/api/products/entities';
+
+@Injectable()
+export class OrderItemsService {
+  constructor(
+    @InjectRepository(OrderItem)
+    private readonly orderItemsRepo: Repository<OrderItem>,
+    @InjectRepository(Order)
+    private readonly ordersRepo: Repository<Order>,
+    @InjectRepository(Product)
+    private readonly productsRepo: Repository<Product>,
+  ) {}
+
+  async create(dto: CreateOrderItemDto): Promise<OrderItem> {
+    const order = await this.ordersRepo.findOneBy({ id: dto.orderId });
+    if (!order) throw new NotFoundException('Order not found');
+
+    const product = await this.productsRepo.findOneBy({ id: dto.productId });
+    if (!product) throw new NotFoundException('Product not found');
+
+    const item = this.orderItemsRepo.create({
+      order,
+      product,
+      quantity: dto.quantity,
+      price: dto.price,
+    });
+
+    return this.orderItemsRepo.save(item);
+  }
+
+  findAll() {
+    return this.orderItemsRepo.find({ relations: ['order', 'product'] });
+  }
+
+  async findOne(id: string): Promise<OrderItem> {
+    const item = await this.orderItemsRepo.findOne({
+      where: { id },
+      relations: ['order', 'product'],
+    });
+    if (!item) throw new NotFoundException('Order item not found');
+    return item;
+  }
+
+  async update(id: string, dto: UpdateOrderItemDto): Promise<OrderItem> {
+    const item = await this.findOne(id);
+    Object.assign(item, dto);
+    return this.orderItemsRepo.save(item);
+  }
+
+  async remove(id: string): Promise<void> {
+    const item = await this.findOne(id);
+    await this.orderItemsRepo.remove(item);
+  }
+}

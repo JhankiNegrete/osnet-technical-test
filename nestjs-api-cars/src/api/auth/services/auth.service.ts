@@ -1,4 +1,3 @@
-// src/auth/auth.service.ts
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
@@ -34,6 +33,7 @@ export class AuthService extends BaseService {
   login(user: User) {
     const payload = { sub: user.id, email: user.email, role: user.role };
     return {
+      ...user,
       accessToken: this.jwtService.sign(payload, {
         secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn: '1h',

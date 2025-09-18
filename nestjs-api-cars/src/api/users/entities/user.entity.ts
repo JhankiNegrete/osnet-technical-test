@@ -7,7 +7,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-// import { Order } from './order.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
